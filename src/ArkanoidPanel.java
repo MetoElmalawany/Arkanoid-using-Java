@@ -6,17 +6,21 @@ import javax.swing.*;
 public class ArkanoidPanel extends JPanel implements Runnable{
 
     static final int GAME_WIDTH = 600;
-    static final int GAME_HEIGHT = 700;
+    static final int GAME_HEIGHT = 750;
     static final Dimension SCREEN_SIZE = new Dimension(GAME_WIDTH,GAME_HEIGHT);
     static final int BRICK_DIAMETER = 25;
     static final int BALL_DIAMETER = 20;
     static final int PADDLE_WIDTH = 100;
     static final int PADDLE_HEIGHT = 25;
+    static final int STATS_HEIGHT = 50;
+    static final int ROWS_OF_BRICKS = 4;
+    static final int NUM_OF_BRICKS = (GAME_WIDTH/BRICK_DIAMETER) * ROWS_OF_BRICKS;
     Thread gameThread;
     Image image;
     Graphics graphics;
     Random random;
     Paddle paddle;
+    Stats stats;
     ArrayList<Brick> bricks;
     Ball ball;
 
@@ -24,6 +28,7 @@ public class ArkanoidPanel extends JPanel implements Runnable{
         newPaddles();
         newBall();
         newBricks();
+        newStats();
         this.setFocusable(true);
         this.addKeyListener(new AL());
         this.setPreferredSize(SCREEN_SIZE);
@@ -42,14 +47,17 @@ public class ArkanoidPanel extends JPanel implements Runnable{
     void newBricks() {
         bricks = new ArrayList<>();
         int brickWidth = BRICK_DIAMETER, brickHeight = BRICK_DIAMETER;
-        int rows = 4, cols = GAME_WIDTH/brickWidth;
+        int rows = ROWS_OF_BRICKS, cols = GAME_WIDTH/brickWidth;
         for (int row = 0; row < rows; row++) {
             for (int col = 0; col < cols; col++) {
                 bricks.add(new Brick(BRICK_DIAMETER*col,
-                        BRICK_DIAMETER*row,
+                        (BRICK_DIAMETER*row) + 50,
                         brickWidth, brickHeight));
             }
         }
+    }
+    public void newStats() {
+        stats = new Stats(GAME_WIDTH,GAME_HEIGHT,STATS_HEIGHT);
     }
     public void paint(Graphics g) {
         image = createImage(getWidth(),getHeight());
@@ -65,12 +73,28 @@ public class ArkanoidPanel extends JPanel implements Runnable{
                 brick.draw(g);
             }
         }
-
+        stats.draw(g);
         Toolkit.getDefaultToolkit().sync();
 
     }
     public void move() {
         paddle.move();
+        int score = stats.getScore()/24;
+        System.out.println(score);
+        System.out.println(ball.getInitialSpeed());
+        switch (score){
+            case 1:
+                ball.setInitialSpeed(9);
+                break;
+            case 2:
+                ball.setInitialSpeed(11);
+                break;
+            case 3:
+                ball.setInitialSpeed(12);
+                break;
+            default:
+                break;
+        }
         ball.move();
     }
     public void checkCollision() {
@@ -82,10 +106,12 @@ public class ArkanoidPanel extends JPanel implements Runnable{
         if(ball.x >= GAME_WIDTH-BALL_DIAMETER) {
             ball.setXDirection(-ball.xVelocity);
         }
-        if(ball.y <= 0) {
+        if(ball.y <= STATS_HEIGHT) {
             ball.setYDirection(-ball.yVelocity);
         }
         if(ball.y >= GAME_HEIGHT - BALL_DIAMETER) {
+            int lives = stats.getLives();
+            stats.setLives(--lives);
             newPaddles();
             newBall();
         }
@@ -98,12 +124,14 @@ public class ArkanoidPanel extends JPanel implements Runnable{
             paddle.x=0;
         }
         if(paddle.x >= (GAME_WIDTH-PADDLE_WIDTH)) {
-            paddle.x= GAME_WIDTH-PADDLE_WIDTH;
+            paddle.x = GAME_WIDTH-PADDLE_WIDTH;
         }
         for (Brick brick: bricks){
             if (ball.intersects(brick) && !brick.isDestroyed()){
                 ball.setYDirection(-ball.yVelocity);
                 brick.setDestroyed(true);
+                int score = stats.getScore();
+                stats.setScore(++score);
                 break;
             }
         }
