@@ -2,8 +2,9 @@ import java.awt.*;
 
 public class Brick extends Rectangle{
     private boolean destroyed;
-    Brick(int x, int y, int PADDLE_WIDTH, int PADDLE_HEIGHT){
-        super(x,y,PADDLE_WIDTH,PADDLE_HEIGHT);
+
+    Brick(int x, int y, int BRICK_WIDTH, int BRICK_HEIGHT){
+        super(x,y,BRICK_WIDTH,BRICK_HEIGHT);
         this.destroyed = false;
     }
 
@@ -20,4 +21,5 @@ public class Brick extends Rectangle{
     public boolean isDestroyed() {
         return destroyed;
     }
+
 }

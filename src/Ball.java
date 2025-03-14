@@ -1,43 +1,40 @@
 import java.awt.*;
 import java.util.*;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 
 public class Ball extends Rectangle{
 
     Random random;
     int xVelocity;
     int yVelocity;
-    int initialSpeed;
+    private final int INITIAL_SPEED = 8;
+    private final int FAST_SPEED = 15;
+    private int speed = INITIAL_SPEED;
+    private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+    private ScheduledFuture<?> powerUpTask; // Stores the scheduled task
 
     Ball(int x, int y, int width, int height){
         super(x,y,width,height);
-        this.initialSpeed = 8;
-        random = new Random();
-        int randomXDirection = random.nextInt(2);
-        if(randomXDirection == 0) {
-            randomXDirection--;
-        }
-        setXDirection(randomXDirection*initialSpeed);
-
-        int randomYDirection = random.nextInt(2);
-        if(randomYDirection == 0) {
-            randomYDirection--;
-        }
-        setYDirection(randomYDirection*initialSpeed);
+        setXDirection(speed);
+        setYDirection(speed);
     }
 
-    public void setInitialSpeed(int initialSpeed) {
-        this.initialSpeed = initialSpeed;
+    public void setSpeed(int speed) {
+        this.speed = speed;
     }
 
-    public int getInitialSpeed() {
-        return initialSpeed;
+    public int getSpeed() {
+        return speed;
     }
 
     public void setXDirection(int randomXDirection) {
-        xVelocity = randomXDirection;
+        xVelocity = (randomXDirection / INITIAL_SPEED) * speed;
     }
     public void setYDirection(int randomYDirection) {
-        yVelocity = randomYDirection;
+        yVelocity = (randomYDirection / INITIAL_SPEED) * speed;
     }
     public void move() {
         x += xVelocity;
@@ -47,4 +44,5 @@ public class Ball extends Rectangle{
         g.setColor(Color.white);
         g.fillOval(x, y, width, height);
     }
+
 }

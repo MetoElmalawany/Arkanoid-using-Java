@@ -6,25 +6,25 @@ public class Stats extends Rectangle {
     int GAME_HEIGHT;
     int STATS_HEIGHT;
     private int score;
-    private int lives;
+    private int trials;
     Stats(int GAME_WIDTH, int GAME_HEIGHT, int STATS_HEIGHT){
         this.GAME_WIDTH = GAME_WIDTH;
         this.GAME_HEIGHT = GAME_HEIGHT;
         this.STATS_HEIGHT = STATS_HEIGHT;
         this.score = 0;
-        this.lives = 3;
+        this.trials = 3;
     }
 
-    public void setLives(int lives) {
-        this.lives = lives;
+    public void setTrials(int trials) {
+        this.trials = trials;
     }
 
     public void setScore(int score) {
         this.score = score;
     }
 
-    public int getLives() {
-        return lives;
+    public int getTrials() {
+        return trials;
     }
 
     public int getScore() {
@@ -41,7 +41,7 @@ public class Stats extends Rectangle {
 
 
         g.drawString(String.valueOf("Score: ") + String.valueOf(this.score), 10, 40);
-        g.drawString(String.valueOf("Lives: ") + String.valueOf(this.lives), 420, 40);
+        g.drawString(String.valueOf("Trials: ") + String.valueOf(this.trials), 400, 40);
 
     }
 }
